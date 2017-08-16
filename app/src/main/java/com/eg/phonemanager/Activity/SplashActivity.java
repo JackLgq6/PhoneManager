@@ -1,4 +1,4 @@
-package com.eg.phonemanager;
+package com.eg.phonemanager.Activity;
 
 import android.content.Intent;
 import android.content.pm.PackageInfo;
@@ -11,6 +11,8 @@ import android.view.animation.AlphaAnimation;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.eg.phonemanager.R;
 
 public class SplashActivity extends AppCompatActivity {
 
