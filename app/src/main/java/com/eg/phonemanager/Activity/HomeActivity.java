@@ -1,17 +1,26 @@
 package com.eg.phonemanager.Activity;
 
+import android.Manifest;
+import android.content.ComponentName;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.ServiceConnection;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.IBinder;
 import android.os.Message;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.Toast;
 
 import com.eg.phonemanager.R;
+import com.eg.phonemanager.service.DownloadService;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -32,6 +41,7 @@ public class HomeActivity extends AppCompatActivity {
     private String mVersionCode;
     private String mVersionName;
     private String mVersionDescription;
+    private DownloadService.DownloadBinder downloadBinder;
 
     private Handler handler = new Handler() {
         @Override
@@ -46,14 +56,32 @@ public class HomeActivity extends AppCompatActivity {
             }
         }
     };
+    
+    private ServiceConnection connection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            downloadBinder = (DownloadService.DownloadBinder) service;
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
+        Intent intent = new Intent(this, DownloadService.class);
+        startService(intent);
+        bindService(intent, connection, BIND_AUTO_CREATE);
+        if (ContextCompat.checkSelfPermission(HomeActivity.this, 
+                Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(HomeActivity.this, new String[]{
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
+        }
         checkVersionCode();
-
     }
 
     private void checkVersionCode() {
@@ -66,6 +94,7 @@ public class HomeActivity extends AppCompatActivity {
                 try {
                     Response response = client.newCall(request).execute();
                     String responseData = response.body().string();
+                    Log.i(TAG, "responseData: " + responseData);
                     parseJSONWithJSONObject(responseData);
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -100,6 +129,22 @@ public class HomeActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, 
+       @NonNull int[] grantResults) {
+        switch (requestCode) {
+            case 1:
+                if (grantResults[0] > 0 && grantResults[0] != PackageManager.PERMISSION_GRANTED) {
+                    Toast.makeText(this, "Denied permissions will not be able to use the application",
+                        Toast.LENGTH_SHORT).show();
+                    finish();
+                }
+                break;
+            default:
+                break;
+        }
+    }
+
     private void showUpdateDialog() {
         final AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setIcon(R.drawable.ic_launcher);
@@ -108,7 +153,9 @@ public class HomeActivity extends AppCompatActivity {
         builder.setPositiveButton("前往下载", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                Log.i(TAG, "开始下载……");
+                String url = "http://10.0.2.2:8080/cm_security_cn.apk";
+                downloadBinder.startDownload(url);
+//                Log.i(TAG, "开始下载……");
             }
         });
         builder.setNegativeButton("稍后再说", new DialogInterface.OnClickListener() {
@@ -136,5 +183,11 @@ public class HomeActivity extends AppCompatActivity {
             e.printStackTrace();
         }
         return 0;
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        unbindService(connection);
     }
 }
