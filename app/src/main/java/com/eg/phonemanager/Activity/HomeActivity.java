@@ -60,7 +60,9 @@ public class HomeActivity extends AppCompatActivity {
     private ServiceConnection connection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
+            Log.i(TAG, "service" + service);
             downloadBinder = (DownloadService.DownloadBinder) service;
+
         }
 
         @Override
@@ -72,16 +74,20 @@ public class HomeActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
-
         Intent intent = new Intent(this, DownloadService.class);
         startService(intent);
         bindService(intent, connection, BIND_AUTO_CREATE);
-        if (ContextCompat.checkSelfPermission(HomeActivity.this, 
+        if (ContextCompat.checkSelfPermission(HomeActivity.this,
                 Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(HomeActivity.this, new String[]{
                     Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
         }
         checkVersionCode();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
     }
 
     private void checkVersionCode() {
@@ -190,4 +196,5 @@ public class HomeActivity extends AppCompatActivity {
         super.onDestroy();
         unbindService(connection);
     }
+
 }

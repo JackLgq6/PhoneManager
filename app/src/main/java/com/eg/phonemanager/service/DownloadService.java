@@ -100,7 +100,7 @@ public class DownloadService extends Service {
                     String fileName = downloadUrl.substring(downloadUrl.lastIndexOf("/"));
                     String directory = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
                         .getParent();
-                    File file = new File(fileName + directory);
+                    File file = new File(directory + fileName);
                     if (file.exists()) {
                         file.delete();
                     }
