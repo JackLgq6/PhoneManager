@@ -136,7 +136,7 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, 
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
        @NonNull int[] grantResults) {
         switch (requestCode) {
             case 1:
@@ -190,6 +190,7 @@ public class HomeActivity extends AppCompatActivity {
         }
         return 0;
     }
+
 
     @Override
     protected void onDestroy() {

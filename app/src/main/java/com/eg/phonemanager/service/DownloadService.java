@@ -6,9 +6,12 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Binder;
+import android.os.Build;
 import android.os.Environment;
 import android.os.IBinder;
+import android.support.v4.content.FileProvider;
 import android.support.v7.app.NotificationCompat;
 import android.widget.Toast;
 
@@ -40,6 +43,11 @@ public class DownloadService extends Service {
             stopForeground(true);
             getNotificationManager().notify(1, getNotification("Download Success", -1));
             Toast.makeText(DownloadService.this, "Download Success", Toast.LENGTH_SHORT).show();
+            String fileName = downloadUrl.substring(downloadUrl.lastIndexOf("/"));
+            String directory = Environment.getExternalStoragePublicDirectory(
+                Environment.DIRECTORY_DOWNLOADS).getPath();
+            File file = new File(directory + fileName);
+            installApk(file);
         }
 
         @Override
@@ -62,6 +70,20 @@ public class DownloadService extends Service {
             downloadTask = null;
             stopForeground(true);
             Toast.makeText(DownloadService.this, "Canceled", Toast.LENGTH_SHORT).show();
+        }
+
+        public void installApk(File file) {
+            Intent intent = new Intent("android.intent.action.VIEW");
+            intent.addCategory("android.intent.category.DEFAULT");
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                Uri uri = FileProvider.getUriForFile(getApplicationContext(),
+                    getApplicationContext().getPackageName() + ".fileProvider", file);
+                intent.setDataAndType(uri, "application/vnd.android.package-archive");
+            } else {
+                intent.setDataAndType(Uri.fromFile(file), "application/vnd.android.package-archive");
+            }
+            startActivity(intent);
         }
     };
 
@@ -99,7 +121,7 @@ public class DownloadService extends Service {
                     //and close off notifications
                     String fileName = downloadUrl.substring(downloadUrl.lastIndexOf("/"));
                     String directory = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
-                        .getParent();
+                        .getPath();
                     File file = new File(directory + fileName);
                     if (file.exists()) {
                         file.delete();
