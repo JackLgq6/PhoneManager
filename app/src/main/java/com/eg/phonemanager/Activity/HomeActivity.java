@@ -17,6 +17,13 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.BaseAdapter;
+import android.widget.GridView;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.eg.phonemanager.R;
@@ -42,6 +49,9 @@ public class HomeActivity extends AppCompatActivity {
     private String mVersionName;
     private String mVersionDescription;
     private DownloadService.DownloadBinder downloadBinder;
+    private GridView gv_home;
+    private String[] mTitleStrs;
+    private int[] mDrawableIds;
 
     private Handler handler = new Handler() {
         @Override
@@ -83,11 +93,69 @@ public class HomeActivity extends AppCompatActivity {
                     Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
         }
         checkVersionCode();
+        initUI();
+        initData();
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
+    private void initData() {
+        mTitleStrs = new String[] {"手机防盗","通信卫士","软件管理","进程管理","流量统计",
+            "手机杀毒","缓存清理","高级工具","设置中心"};
+        mDrawableIds = new int[] {
+                R.drawable.home_safe,R.drawable.home_callmsgsafe,
+                R.drawable.home_apps,R.drawable.home_taskmanager,
+                R.drawable.home_netmanager,R.drawable.home_trojan,
+                R.drawable.home_sysoptimize,R.drawable.home_tools,
+                R.drawable.home_settings};
+        gv_home.setAdapter(new MyAdapter());
+        gv_home.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                switch (position) {
+                    case 0:
+                        break;
+                    case 8:
+                        Intent intent = new Intent(HomeActivity.this, SettingActivity.class);
+                        startActivity(intent);
+                        break;
+                    default:
+                        break;
+
+                }
+            }
+        });
+    }
+
+    class MyAdapter extends BaseAdapter {
+
+        @Override
+        public int getCount() {
+            return mTitleStrs.length;
+        }
+
+        @Override
+        public Object getItem(int position) {
+            return mTitleStrs[position];
+        }
+
+        @Override
+        public long getItemId(int position) {
+            return position;
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            //MyApplication.getContext() 空指针，为啥？
+            View view = View.inflate(getApplicationContext(), R.layout.gridview_item, null);
+            TextView tv_title = (TextView) view.findViewById(R.id.tv_title);
+            ImageView iv_icon = (ImageView) view.findViewById(R.id.iv_icon);
+            tv_title.setText(mTitleStrs[position]);
+            iv_icon.setImageResource(mDrawableIds[position]);
+            return view;
+        }
+    }
+
+    private void initUI() {
+        gv_home = (GridView) findViewById(R.id.gv_home);
     }
 
     private void checkVersionCode() {
@@ -159,7 +227,7 @@ public class HomeActivity extends AppCompatActivity {
         builder.setPositiveButton("前往下载", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                String url = "http://10.0.2.2:8080/cm_security_cn.apk";
+                String url = "http://10.0.2.2:8080/PhoneManager.apk";
                 downloadBinder.startDownload(url);
 //                Log.i(TAG, "开始下载……");
             }

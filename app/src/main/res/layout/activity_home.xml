@@ -8,9 +8,39 @@
     android:orientation="vertical">
 
     <TextView
-        android:layout_width="wrap_content"
+        android:text="功能列表"
+        style="@style/TitleStyle"/>
+    <!-- android:ellipsize="end"添加省略点的所在位置 -->
+    <!-- 想让文字出现跑马灯效果,必须让其获取焦点 -->
+    <!-- android:marqueeRepeatLimit="marquee_forever"一直滚动属性 -->
+    <!-- 自定义控件达到滚动效果(其实就是重写原有的TextView,让其一直能够获取焦点即可) -->
+    <!--<TextView
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="这是主界面"
-        />
+        android:singleLine="true"
+        android:text="有了手机管家，麻麻再也不用担心垃病毒和圾软件出现在我的手机中了"
+        android:padding="5dp"
+        android:textColor="#000"
+        android:ellipsize="marquee"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:marqueeRepeatLimit="marquee_forever"/>-->
+    <com.eg.phonemanager.view.FocusTextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:singleLine="true"
+        android:text="有了手机管家，麻麻再也不用担心垃病毒和圾软件出现在我的手机中了"
+        android:padding="5dp"
+        android:textColor="#f00"
+        android:ellipsize="marquee"
+        android:marqueeRepeatLimit="marquee_forever"/>
+    <GridView
+        android:id="@+id/gv_home"
+        android:gravity="center"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:numColumns="3"
+        android:verticalSpacing="10dp">
+    </GridView>
 
 </LinearLayout>

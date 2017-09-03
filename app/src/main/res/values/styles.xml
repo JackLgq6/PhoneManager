@@ -8,4 +8,22 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+    <!--<TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="功能列表"
+        android:textSize="20sp"
+        android:textColor="#000"
+        android:background="#0f0"
+        android:padding="10dp"/>-->
+    <style name="TitleStyle">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textColor">#000</item>
+        <item name="android:textSize">20sp</item>
+        <item name="android:background">#0f0</item>
+        <item name="android:padding">10dp</item>
+    </style>
 </resources>

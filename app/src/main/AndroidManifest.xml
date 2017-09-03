@@ -31,6 +31,8 @@
         </activity>
         <service android:name=".service.DownloadService">
         </service>
+        <activity android:name=".Activity.SettingActivity">
+        </activity>
     </application>
 
 </manifest>
