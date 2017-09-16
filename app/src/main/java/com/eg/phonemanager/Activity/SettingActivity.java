@@ -6,6 +6,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
 import com.eg.phonemanager.R;
+import com.eg.phonemanager.utils.ConstantValue;
+import com.eg.phonemanager.utils.SpUtil;
 import com.eg.phonemanager.view.SettingItemView;
 
 /**
@@ -25,6 +27,9 @@ public class SettingActivity extends AppCompatActivity {
 
     private void initUpdate() {
         final SettingItemView siv_update = (SettingItemView) findViewById(R.id.siv_update);
+        boolean open_update = SpUtil.getBoolean(this, ConstantValue.OPEN_UPDATE, false);
+        //是否选中,根据上一次存储的结果去做决定
+        siv_update.setChecked(open_update);
         siv_update.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -34,6 +39,7 @@ public class SettingActivity extends AppCompatActivity {
                 boolean isChecked = siv_update.isChecked();
                 //将原有状态取反
                 siv_update.setChecked(!isChecked);
+                SpUtil.putBoolean(getApplicationContext(), ConstantValue.OPEN_UPDATE, !isChecked);
             }
         });
     }

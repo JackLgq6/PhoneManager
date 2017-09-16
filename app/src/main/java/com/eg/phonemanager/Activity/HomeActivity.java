@@ -16,11 +16,14 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -28,6 +31,8 @@ import android.widget.Toast;
 
 import com.eg.phonemanager.R;
 import com.eg.phonemanager.service.DownloadService;
+import com.eg.phonemanager.utils.ConstantValue;
+import com.eg.phonemanager.utils.SpUtil;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -92,7 +97,9 @@ public class HomeActivity extends AppCompatActivity {
             ActivityCompat.requestPermissions(HomeActivity.this, new String[]{
                     Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
         }
-        checkVersionCode();
+        if (SpUtil.getBoolean(this, ConstantValue.OPEN_UPDATE, false)) {
+            checkVersionCode();
+        }
         initUI();
         initData();
     }
@@ -112,6 +119,7 @@ public class HomeActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 switch (position) {
                     case 0:
+                        showDialog();
                         break;
                     case 8:
                         Intent intent = new Intent(HomeActivity.this, SettingActivity.class);
@@ -121,6 +129,97 @@ public class HomeActivity extends AppCompatActivity {
                         break;
 
                 }
+            }
+        });
+    }
+
+    private void showDialog() {
+        //判断本地是否有存储密码
+        String pwd = SpUtil.getString(this, ConstantValue.MOBILE_SAFE_PWD, "");
+        if (TextUtils.isEmpty(pwd)) {
+            showPwdSetDialog();
+        } else {
+            showPwdConfirmDialog();
+        }
+    }
+
+    private void showPwdSetDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        final AlertDialog dialog = builder.create();
+        View view = View.inflate(this, R.layout.dialog_set_pwd, null);
+        dialog.setView(view);
+        dialog.show();
+        Button bt_submit = (Button) view.findViewById(R.id.bt_submit);
+        Button bt_cancel = (Button) view.findViewById(R.id.bt_cancel);
+        final EditText et_set_pwd = (EditText) view.findViewById(R.id.et_set_pwd);
+        final EditText et_confirm_pwd = (EditText) view.findViewById(R.id.et_confirm_pwd);
+        bt_submit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String pwd = et_set_pwd.getText().toString();
+                String confirm_pwd = et_confirm_pwd.getText().toString();
+                if (TextUtils.isEmpty(pwd)) {
+                    Toast.makeText(HomeActivity.this, "请输入密码", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                if (TextUtils.isEmpty(confirm_pwd)) {
+                    Toast.makeText(HomeActivity.this, "请输入确认密码", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                if (!TextUtils.isEmpty(pwd) && !TextUtils.isEmpty(confirm_pwd)) {
+                    if (pwd.equals(confirm_pwd)) {
+                        Log.i(TAG, "pwd: " + pwd);
+                        Log.i(TAG, "confirm_pwd: " + confirm_pwd);
+                        SpUtil.putString(HomeActivity.this, ConstantValue.MOBILE_SAFE_PWD, pwd);
+                        Intent intent = new Intent(HomeActivity.this, Setup1Activity.class);
+                        startActivity(intent);
+                        dialog.dismiss();
+                    }
+                }
+            }
+        });
+        bt_cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+    }
+
+    private void showPwdConfirmDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        final AlertDialog dialog = builder.create();
+        View view = View.inflate(this, R.layout.dialog_confirm_pwd, null);
+        dialog.setView(view);
+        dialog.show();
+        Button bt_submit = (Button) view.findViewById(R.id.bt_submit);
+        Button bt_cancel = (Button) view.findViewById(R.id.bt_cancel);
+        final EditText et_confirm_pwd = (EditText) view.findViewById(R.id.et_confirm_pwd);
+        bt_submit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String confirm_pwd = et_confirm_pwd.getText().toString();
+                if (TextUtils.isEmpty(confirm_pwd)) {
+                    Toast.makeText(HomeActivity.this, "请输入确认密码", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                if (!TextUtils.isEmpty(confirm_pwd)) {
+                    String mobile_safe_pwd = SpUtil.getString(HomeActivity.this, ConstantValue.MOBILE_SAFE_PWD, "");
+                    if (confirm_pwd.equals(mobile_safe_pwd)) {
+                        Intent intent = new Intent(HomeActivity.this, Setup1Activity.class);
+                        startActivity(intent);
+                        dialog.dismiss();
+                    } else {
+                        Toast.makeText(HomeActivity.this, "密码错误", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                }
+            }
+        });
+        bt_cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
             }
         });
     }

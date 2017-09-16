@@ -52,6 +52,9 @@ public class SplashActivity extends AppCompatActivity {
     }
 
     private void welcome() {
+        //消息机制
+		//mHandler.sendMessageDelayed(msg, 4000);
+        //在发送消息4秒后去处理,ENTER_HOME状态码指向的消息
         handler.sendEmptyMessageDelayed(ENTER_HOME, 4000);
     }
 

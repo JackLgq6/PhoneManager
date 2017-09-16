@@ -9,13 +9,20 @@ import android.widget.TextView;
 
 import com.eg.phonemanager.R;
 
+
+
 /**
  * Created by jack on 17-9-3.
  */
 public class SettingItemView extends RelativeLayout {
 
+    private static final String TAG = "SettingItemView";
+    private static final String NAMESPACE = "http://schemas.android.com/apk/res/com.eg.phonemanager";
     private TextView tv_setting_des;
     private CheckBox cb_box;
+    private String desTitle;
+    private String desOn;
+    private String desOff;
 
     public SettingItemView(Context context) {
         this(context, null);
@@ -36,7 +43,24 @@ public class SettingItemView extends RelativeLayout {
         TextView tv_setting_title = (TextView) findViewById(R.id.tv_setting_title);
         tv_setting_des = (TextView) findViewById(R.id.tv_setting_des);
         cb_box = (CheckBox) findViewById(R.id.cb_box);
-        tv_setting_title.setText("自动更新设置");
+        //通过属性索引获取属性名称&属性值
+        /*for (int i = 0; i < attrs.getAttributeCount(); i++) {
+            Log.i(TAG, "name: " + attrs.getAttributeName(i));
+            Log.i(TAG, "value: " + attrs.getAttributeValue(i));
+        }*/
+        initAttrs(attrs);
+        tv_setting_title.setText(desTitle);
+    }
+
+    /**
+     * 返回属性集合中自定义属性的属性值
+     * @param attrs	构造方法中维护好的属性集合
+     */
+    private void initAttrs(AttributeSet attrs) {
+        //通过名称空间和属性名称获取属性值
+        desTitle = attrs.getAttributeValue(NAMESPACE, "desTitle");
+        desOn = attrs.getAttributeValue(NAMESPACE, "desOn");
+        desOff = attrs.getAttributeValue(NAMESPACE, "desOff");
     }
 
     /**
@@ -55,9 +79,9 @@ public class SettingItemView extends RelativeLayout {
         //当前条目在选择的过程中,cb_box选中状态也在跟随(isCheck)变化
         cb_box.setChecked(isChecked); //如果不设置cb_box的状态变化，选中一次后就没有没变化，isChecked永远为true
         if (isChecked) {
-            tv_setting_des.setText("自动更新已开启");
+            tv_setting_des.setText(desOn);
         } else {
-            tv_setting_des.setText("自动更新已关闭");
+            tv_setting_des.setText(desOff);
         }
     }
 }
