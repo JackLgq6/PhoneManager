@@ -1,14 +1,14 @@
 package com.eg.phonemanager.Activity;
 
-import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
-import android.view.View;
-
 import com.eg.phonemanager.R;
 import com.eg.phonemanager.utils.ConstantValue;
 import com.eg.phonemanager.utils.SpUtil;
 import com.eg.phonemanager.view.SettingItemView;
+
+import android.os.Bundle;
+import android.support.annotation.Nullable;
+import android.support.v7.app.AppCompatActivity;
+import android.view.View;
 
 /**
  * Created by jack on 17-9-3.

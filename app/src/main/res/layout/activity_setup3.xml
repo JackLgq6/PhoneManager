@@ -2,30 +2,34 @@
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_setup3"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.eg.phonemanager.Activity.Setup2Activity"
+    tools:context="com.eg.phonemanager.Activity.Setup3Activity"
     android:orientation="vertical">
 
     <TextView
         style="@style/TitleStyle"
-        android:text="2.手机卡绑定"/>
+        android:text="3.设置安全号码"/>
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="通过绑定sim卡:\n下次重启手机发现sim卡变化,就会发送报警短信"
+        android:text="sim卡变更后:\n报警短信会发送给安全号码"
         android:layout_margin="5dp"
         android:textSize="18sp"
         android:textColor="#000"/>
-    <com.eg.phonemanager.view.SettingItemView
-        xmlns:phoneManager="http://schemas.android.com/apk/res/com.eg.phonemanager"
-        android:id="@+id/siv_sim_bound"
+    <EditText
+        android:id="@+id/et_phone_number"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        phoneManager:desTitle="点击绑定sim卡"
-        phoneManager:desOn="sim已绑定"
-        phoneManager:desOff="sim卡未绑定">
-    </com.eg.phonemanager.view.SettingItemView>
+        android:inputType="number"
+        android:hint="请输入电话号码"/>
+    <Button
+        android:id="@+id/bt_select_number"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/selector_number_btn_bg"
+        android:text="请选择联系人"/>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -38,11 +42,11 @@
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@android:drawable/presence_online"/>
+            android:src="@android:drawable/presence_invisible"/>
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@android:drawable/presence_invisible"/>
+            android:src="@android:drawable/presence_online"/>
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -54,11 +58,12 @@
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:src="@drawable/bind"/>
+            android:background="@drawable/phone"
+            android:layout_centerInParent="true"/>
         <Button
             style="@style/preBtn"/>
         <Button
             style="@style/nextBtn"/>
     </RelativeLayout>
+
 </LinearLayout>

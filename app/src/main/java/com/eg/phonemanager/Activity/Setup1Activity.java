@@ -23,5 +23,8 @@ class Setup1Activity extends AppCompatActivity{
     public void nextPage(View view) {
         Intent intent = new Intent(this, Setup2Activity.class);
         startActivity(intent);
+        finish();
+
+        overridePendingTransition(R.anim.next_in_anim, R.anim.next_out_anim);
     }
 }

@@ -39,6 +39,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -92,10 +94,22 @@ public class HomeActivity extends AppCompatActivity {
         Intent intent = new Intent(this, DownloadService.class);
         startService(intent);
         bindService(intent, connection, BIND_AUTO_CREATE);
+        List<String> permissionList = new ArrayList<>();
         if (ContextCompat.checkSelfPermission(HomeActivity.this,
                 Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(HomeActivity.this, new String[]{
-                    Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
+            permissionList.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        }
+        if (ContextCompat.checkSelfPermission(HomeActivity.this,
+                Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
+            permissionList.add(Manifest.permission.READ_PHONE_STATE);
+        }
+        if (ContextCompat.checkSelfPermission(HomeActivity.this, Manifest.permission.READ_CONTACTS)
+                != PackageManager.PERMISSION_GRANTED) {
+            permissionList.add(Manifest.permission.READ_CONTACTS);
+        }
+        if (!permissionList.isEmpty()) {
+            String[] permissions = permissionList.toArray(new String[permissionList.size()]);
+            ActivityCompat.requestPermissions(HomeActivity.this, permissions, 1);
         }
         if (SpUtil.getBoolean(this, ConstantValue.OPEN_UPDATE, false)) {
             checkVersionCode();
@@ -144,7 +158,7 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     private void showPwdSetDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
         final AlertDialog dialog = builder.create();
         View view = View.inflate(this, R.layout.dialog_set_pwd, null);
         dialog.setView(view);
@@ -206,8 +220,15 @@ public class HomeActivity extends AppCompatActivity {
                 if (!TextUtils.isEmpty(confirm_pwd)) {
                     String mobile_safe_pwd = SpUtil.getString(HomeActivity.this, ConstantValue.MOBILE_SAFE_PWD, "");
                     if (confirm_pwd.equals(mobile_safe_pwd)) {
-                        Intent intent = new Intent(HomeActivity.this, Setup1Activity.class);
-                        startActivity(intent);
+                        boolean setup_over = SpUtil.getBoolean(HomeActivity.this, ConstantValue
+                            .SETUP_OVER, false);
+                        if (setup_over) {
+                            Intent intent = new Intent(HomeActivity.this, SetupOverActivity.class);
+                            startActivity(intent);
+                        } else {
+                            Intent intent = new Intent(HomeActivity.this, Setup1Activity.class);
+                            startActivity(intent);
+                        }
                         dialog.dismiss();
                     } else {
                         Toast.makeText(HomeActivity.this, "密码错误", Toast.LENGTH_SHORT).show();
@@ -307,9 +328,17 @@ public class HomeActivity extends AppCompatActivity {
        @NonNull int[] grantResults) {
         switch (requestCode) {
             case 1:
-                if (grantResults[0] > 0 && grantResults[0] != PackageManager.PERMISSION_GRANTED) {
-                    Toast.makeText(this, "Denied permissions will not be able to use the application",
-                        Toast.LENGTH_SHORT).show();
+                if (grantResults.length > 0) {
+                    for (int result : grantResults) {
+                        if (result != PackageManager.PERMISSION_GRANTED) {
+                            Toast.makeText(this, "Denied permissions will not be able to use the application",
+                                    Toast.LENGTH_SHORT).show();
+                            finish();
+                            return;
+                        }
+                    }
+                } else {
+                    Toast.makeText(this, "发生未知错误", Toast.LENGTH_SHORT).show();
                     finish();
                 }
                 break;
