@@ -1,19 +1,18 @@
 package com.eg.phonemanager.Activity;
 
-import com.eg.phonemanager.R;
-import com.eg.phonemanager.utils.ConstantValue;
-import com.eg.phonemanager.utils.SpUtil;
-
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-public class Setup3Activity extends AppCompatActivity {
+import com.eg.phonemanager.R;
+import com.eg.phonemanager.utils.ConstantValue;
+import com.eg.phonemanager.utils.SpUtil;
+
+public class Setup3Activity extends BaseSetupActivity {
 
     private EditText et_phone_number;
     private Button bt_select_number;
@@ -55,22 +54,27 @@ public class Setup3Activity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
     }
 
-    public void prePage(View view) {
+    @Override
+    public void nextPage() {
+        String phone = et_phone_number.getText().toString();
+        if (!TextUtils.isEmpty(phone)) {
+            Intent intent = new Intent(this, Setup4Activity.class);
+            startActivity(intent);
+            finish();
+            //如果现在是输入电话号码,则需要去保存
+            SpUtil.putString(this, ConstantValue.CONTACT_PHONE_NUMBER, phone);
+            overridePendingTransition(R.anim.next_in_anim, R.anim.next_out_anim);
+        } else {
+            Toast.makeText(this, "请输入电话号码", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    @Override
+    public void prePage() {
         Intent intent = new Intent(this, Setup2Activity.class);
         startActivity(intent);
         finish();
         overridePendingTransition(R.anim.pre_in_anim, R.anim.pre_out_anim);
     }
 
-    public void nextPage(View view) {
-        String phone = et_phone_number.getText().toString();
-        if (!TextUtils.isEmpty(phone)) {
-            Intent intent = new Intent(this, Setup4Activity.class);
-            startActivity(intent);
-            finish();
-            overridePendingTransition(R.anim.next_in_anim, R.anim.next_out_anim);
-        } else {
-            Toast.makeText(this, "请输入电话号码", Toast.LENGTH_SHORT).show();
-        }
-    }
 }

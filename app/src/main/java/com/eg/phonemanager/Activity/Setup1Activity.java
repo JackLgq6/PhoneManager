@@ -3,8 +3,6 @@ package com.eg.phonemanager.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
-import android.view.View;
 
 import com.eg.phonemanager.R;
 
@@ -12,7 +10,7 @@ import com.eg.phonemanager.R;
  * Created by jack on 17-9-9.
  */
 
-class Setup1Activity extends AppCompatActivity{
+public class Setup1Activity extends BaseSetupActivity {
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -20,11 +18,16 @@ class Setup1Activity extends AppCompatActivity{
         setContentView(R.layout.activity_setup1);
     }
 
-    public void nextPage(View view) {
+    @Override
+    public void nextPage() {
         Intent intent = new Intent(this, Setup2Activity.class);
         startActivity(intent);
         finish();
-
         overridePendingTransition(R.anim.next_in_anim, R.anim.next_out_anim);
+    }
+
+    @Override
+    public void prePage() {
+
     }
 }

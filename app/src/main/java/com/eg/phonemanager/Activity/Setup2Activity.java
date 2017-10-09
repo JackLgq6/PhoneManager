@@ -2,7 +2,6 @@ package com.eg.phonemanager.Activity;
 
 import android.content.Context;
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.telephony.TelephonyManager;
 import android.text.TextUtils;
@@ -14,7 +13,7 @@ import com.eg.phonemanager.utils.ConstantValue;
 import com.eg.phonemanager.utils.SpUtil;
 import com.eg.phonemanager.view.SettingItemView;
 
-public class Setup2Activity extends AppCompatActivity {
+public class Setup2Activity extends BaseSetupActivity {
 
     private SettingItemView siv_sim_bound;
 
@@ -55,14 +54,8 @@ public class Setup2Activity extends AppCompatActivity {
         });
     }
 
-    public void prePage(View view) {
-        Intent intent = new Intent(this, Setup1Activity.class);
-        startActivity(intent);
-        finish();
-        overridePendingTransition(R.anim.pre_in_anim, R.anim.pre_out_anim);
-    }
-
-    public void nextPage(View view) {
+    @Override
+    public void nextPage() {
         String serialNumber = SpUtil.getString(this, ConstantValue.SIM_NUMBER, "");
         if (!TextUtils.isEmpty(serialNumber)) {
             Intent intent = new Intent(this, Setup3Activity.class);
@@ -73,4 +66,13 @@ public class Setup2Activity extends AppCompatActivity {
             Toast.makeText(this, "请绑定sim卡", Toast.LENGTH_SHORT).show();
         }
     }
+
+    @Override
+    public void prePage() {
+        Intent intent = new Intent(this, Setup1Activity.class);
+        startActivity(intent);
+        finish();
+        overridePendingTransition(R.anim.pre_in_anim, R.anim.pre_out_anim);
+    }
+
 }

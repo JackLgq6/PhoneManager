@@ -1,18 +1,16 @@
 package com.eg.phonemanager.Activity;
 
-import com.eg.phonemanager.R;
-import com.eg.phonemanager.utils.ConstantValue;
-import com.eg.phonemanager.utils.SpUtil;
-
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
-import android.view.View;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.Toast;
 
-public class Setup4Activity extends AppCompatActivity {
+import com.eg.phonemanager.R;
+import com.eg.phonemanager.utils.ConstantValue;
+import com.eg.phonemanager.utils.SpUtil;
+
+public class Setup4Activity extends BaseSetupActivity {
 
     private CheckBox cb_box;
 
@@ -51,14 +49,8 @@ public class Setup4Activity extends AppCompatActivity {
         });
     }
 
-    public void prePage(View view) {
-        Intent intent = new Intent(this, Setup3Activity.class);
-        startActivity(intent);
-        finish();
-        overridePendingTransition(R.anim.pre_in_anim, R.anim.pre_out_anim);
-    }
-
-    public void nextPage(View view) {
+    @Override
+    public void nextPage() {
         boolean open_security = SpUtil.getBoolean(this, ConstantValue.OPEN_SECURITY, false);
         if (open_security) {
             Intent intent = new Intent(this, SetupOverActivity.class);
@@ -70,4 +62,13 @@ public class Setup4Activity extends AppCompatActivity {
             Toast.makeText(this, "请开启防盗保护", Toast.LENGTH_SHORT).show();
         }
     }
+
+    @Override
+    public void prePage() {
+        Intent intent = new Intent(this, Setup3Activity.class);
+        startActivity(intent);
+        finish();
+        overridePendingTransition(R.anim.pre_in_anim, R.anim.pre_out_anim);
+    }
+
 }
