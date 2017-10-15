@@ -14,6 +14,11 @@ import android.widget.Toast;
 
 import com.eg.phonemanager.R;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+
 public class SplashActivity extends AppCompatActivity {
 
     private TextView tv_version_name;
@@ -47,8 +52,46 @@ public class SplashActivity extends AppCompatActivity {
         setContentView(R.layout.activity_splash);
         initUI();
         initData();
+        initDb();
         initAnimation();
         welcome();
+    }
+
+    private void initDb() {
+        initAddressDb("address.db");
+    }
+
+    private void initAddressDb(String dbName) {
+        File filesDir = getFilesDir();
+        File file = new File(filesDir, dbName);
+        if (file.exists()) {
+            return;
+        }
+        InputStream fis = null;
+        FileOutputStream fos = null;
+        try {
+            fis = getAssets().open(dbName);
+            fos = new FileOutputStream(file);
+            byte[] by = new byte[1024];
+            int len = 0;
+            while ((len = fis.read(by)) != -1) {
+                fos.write(by, 0, len);
+            }
+            Toast.makeText(this, "文件拷贝成功", Toast.LENGTH_SHORT).show();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (fis != null) {
+                    fis.close();
+                }
+                if (fos != null) {
+                    fos.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     private void welcome() {

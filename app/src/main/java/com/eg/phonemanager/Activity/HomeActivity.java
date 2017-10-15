@@ -135,6 +135,10 @@ public class HomeActivity extends AppCompatActivity {
                     case 0:
                         showDialog();
                         break;
+                    case 7:
+                        Intent aToolIntent = new Intent(HomeActivity.this, AToolActivity.class);
+                        startActivity(aToolIntent);
+                        break;
                     case 8:
                         Intent intent = new Intent(HomeActivity.this, SettingActivity.class);
                         startActivity(intent);
